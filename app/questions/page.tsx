@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Question() {
     return (
         <div>
             <main></main>
