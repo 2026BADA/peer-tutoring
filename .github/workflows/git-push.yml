@@ -21,8 +21,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
         with:
           source-directory: 'output'
-          destination-github-username: [Carmel1215]
-          destination-repository-name: [peer-tutoring]
+          destination-github-username: Carmel1215
+          destination-repository-name: peer-tutoring
           user-email: ${{ secrets.EMAIL }}
           commit-message: ${{ github.event.commits[0].message }}
           target-branch: main
