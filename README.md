@@ -4,20 +4,6 @@ peer-tutoring은 2026학년도 BADA 웹부의 팀 프로젝트로, 학생들이 
 
 ## Installation
 
-### OpenAI api 연동
-1. [OpenAI Platform](https://platform.openai.com/docs/overview)에 로그인 후, api키를 발급해 복사합니다. (이때 토큰이 결제된 상태여야 합니다.)
-
-2. git clone으로 프로젝트를 다운받습니다.
-
-3. .env 파일의 `YOUR_API_KEY_HERE`부분에 api 키를 붙여넣기합니다.
-
-4. lib/env/env.g.dart 파일의 `YOUR_API_KEY_HERE`부분에 api 키를 붙여넣기합니다.
-
-### 파이썬 가상환경
-1. server 폴더에 .venv 가상환경을 생성합니다.
-2. 가상환경을 activate합니다.
-2. requirements.txt에 적힌 패키지를 다운로드합니다.
-
 ## Usage
 
 주요 기능
@@ -36,7 +22,8 @@ AI 보조 기능
 욕설 및 부적절한 말 자체 검열
 
 ## Todo
-- [ ] asdf
+
+- [ ]
 
 ## Contributing
 
