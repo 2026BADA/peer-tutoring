@@ -9,7 +9,7 @@ export default function NavBar() {
             </Link>
             <div className="flex gap-4">
                 <Link href="/questions">질문</Link>
-                {/* 나중에 프로필 동적 라우팅 수정하기 */}
+                {/* TODO: 나중에 프로필 동적 라우팅 수정하기 */}
                 <Link href="/profile/me">프로필</Link>
             </div>
         </nav>
