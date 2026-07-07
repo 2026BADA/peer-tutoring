@@ -9,8 +9,10 @@ export default function NavBar() {
             </Link>
             <div className="flex gap-4">
                 <Link href="/questions">질문</Link>
-                {/* TODO: 나중에 프로필 동적 라우팅 수정하기 */}
+                {/* TODO: 프로필 동적 라우팅 수정하기 */}
                 <Link href="/profile/me">프로필</Link>
+                <Link href="/login">로그인</Link>
+                {/* TODO: 로그인 한 경우 로그아웃으로 바꾸기 */}
             </div>
         </nav>
     );
