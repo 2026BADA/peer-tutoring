@@ -41,7 +41,7 @@ export default function AnswerForm({ value, onChange, onSubmit }: AnswerFormProp
                 onChange={(e) => onChange(e.target.value)}
             />
 
-            {/* 등록 버튼.
+            {/* 답변하기 버튼.
                 입력값이 비어있으면(isEmpty) 버튼을 비활성화(disabled)해서
                 빈 답변이 제출되는 것을 막습니다. */}
             <div className="mt-2 flex justify-end">
@@ -50,7 +50,7 @@ export default function AnswerForm({ value, onChange, onSubmit }: AnswerFormProp
                     onClick={onSubmit}
                     disabled={isEmpty}
                 >
-                    등록
+                    답변하기
                 </button>
             </div>
         </div>

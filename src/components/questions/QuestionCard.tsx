@@ -1,16 +1,15 @@
 // ============================================================
-// QuestionCard — 질문 카드 컴포넌트
+// QuestionCard — 질문 리스트 아이템 컴포넌트
 // ------------------------------------------------------------
-// 질문 목록(/questions)에서 질문 하나를 카드 형태로 보여주는 부품입니다.
+// 질문 목록(/questions)에서 질문 하나를 리스트의 한 행(row)으로 보여주는 부품입니다.
 // "보여주기"만 담당하는 순수 컴포넌트라서, 데이터를 props로 받기만 하고
 // 직접 데이터를 가져오거나 클릭 시 페이지를 이동시키는 일은 하지 않습니다.
 //   (페이지 이동은 이 카드를 감싸는 부모 쪽에서 <Link>로 처리합니다.)
 //
-// 카드 구성:
-//   왼쪽 위  → 작성자 (아바타 + 닉네임)
-//   오른쪽 위 → 과목 뱃지 + 채택 여부 (세로로 쌓음)
-//   가운데   → 질문 제목 + 본문 미리보기(글자수로 잘림)
-//   아래     → 작성 시간 + 답변 수
+// 행 구성 (가로 배치):
+//   왼쪽   → 작성자 아바타
+//   가운데 → 과목 뱃지 + 채택 여부 + 질문 제목 (첫 줄) / 본문 미리보기 (둘째 줄)
+//   오른쪽 → 작성자 닉네임 + 작성 시간 + 답변 수
 // ============================================================
 
 import type { Question } from '@/types';
@@ -38,33 +37,21 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     const colors = getCategoryColor(question.category);
 
     return (
-        <div
-            className="rounded-xl border border-base-300 p-4"
-            // 카드 배경색은 과목마다 달라서 Tailwind 클래스로는 표현하기 어렵습니다.
-            // 그래서 이 부분만 인라인 style로 직접 색을 지정합니다.
-            style={{ backgroundColor: colors.card }}
-        >
-            {/* 카드 상단: 왼쪽=작성자 / 오른쪽=과목+상태 */}
-            <div className="flex items-start justify-between gap-2">
-                {/* 왼쪽: 작성자 아바타 + 닉네임 */}
-                <div className="flex items-center gap-1.5">
-                    {/* 아바타 자리. 지금은 회색 원으로 표시.
-                        나중에 실제 프로필 이미지가 생기면 여기에 <img>를 넣으면 됩니다. */}
-                    <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-black/10 text-[11px]">
-                        {/* 닉네임 첫 글자를 아바타 안에 표시 */}
-                        {question.authorName.charAt(0)}
-                    </div>
-                    <span className="text-xs text-base-content/70">
-                        {question.authorName}
-                    </span>
-                </div>
+        <div className="flex items-center gap-3 px-1 py-3">
+            {/* 왼쪽: 작성자 아바타.
+                지금은 닉네임 첫 글자를 넣은 회색 원으로 표시.
+                나중에 실제 프로필 이미지가 생기면 여기에 <img>를 넣으면 됩니다. */}
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/10 text-xs">
+                {question.authorName.charAt(0)}
+            </div>
 
-                {/* 오른쪽: 과목 뱃지와 상태를 세로로 쌓음
-                    (가로로 두면 카드가 좁아질 때 겹칠 수 있어서 세로로 배치) */}
-                <div className="flex flex-col items-end gap-1.5">
+            {/* 가운데: 과목 뱃지 + 상태 + 제목 (첫 줄) / 본문 미리보기 (둘째 줄)
+                min-w-0이 있어야 자식의 truncate가 flex 안에서 제대로 동작합니다. */}
+            <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
                     {/* 과목 뱃지 — 배경/글자색은 과목별 색상 사용 */}
                     <span
-                        className="whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium"
+                        className="shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium"
                         style={{ backgroundColor: colors.badge, color: colors.text }}
                     >
                         {question.category}
@@ -73,32 +60,33 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                     {/* 채택 여부 표시
                         status가 'closed'이면 채택완료, 'open'이면 진행중 */}
                     {question.status === 'closed' ? (
-                        <span className="flex items-center gap-0.5 whitespace-nowrap text-[10px] text-amber-700">
-                            {/* daisyUI/Tabler 아이콘이 있으면 체크 아이콘 사용 가능.
-                                여기서는 의존성 없이 텍스트로 표시. */}
+                        <span className="flex shrink-0 items-center gap-0.5 whitespace-nowrap text-[10px] text-amber-700">
                             ✓ 채택완료
                         </span>
                     ) : (
-                        <span className="whitespace-nowrap text-[10px] text-base-content/40">
+                        <span className="shrink-0 whitespace-nowrap text-[10px] text-base-content/40">
                             진행중
                         </span>
                     )}
+
+                    {/* 질문 제목 */}
+                    <h3 className="truncate text-sm font-medium text-base-content">
+                        {question.title}
+                    </h3>
                 </div>
+
+                {/* 본문 미리보기 — 글자수로 잘라서 한 줄로 표시.
+                    truncate 클래스가 넘치는 텍스트를 '...'으로 처리해줍니다. */}
+                <p className="mt-1 truncate text-xs text-base-content/55">
+                    {getPreview(question.body)}
+                </p>
             </div>
 
-            {/* 가운데: 질문 제목 */}
-            <h3 className="mt-2.5 text-sm font-medium text-base-content">
-                {question.title}
-            </h3>
-
-            {/* 본문 미리보기 — 글자수로 잘라서 한 줄로 표시.
-                truncate 클래스가 넘치는 텍스트를 '...'으로 처리해줍니다. */}
-            <p className="mt-1.5 truncate text-xs text-base-content/55">
-                {getPreview(question.body)}
-            </p>
-
-            {/* 아래: 작성 시간 + 답변 수 */}
-            <div className="mt-2.5 flex justify-between text-[11px] text-base-content/45">
+            {/* 오른쪽: 작성자 닉네임 + 작성 시간 + 답변 수 */}
+            <div className="flex shrink-0 flex-col items-end gap-0.5 text-[11px] text-base-content/45">
+                <span className="text-xs text-base-content/70">
+                    {question.authorName}
+                </span>
                 {/* createdAt은 ISO 문자열이라 그대로 보여주면 보기 안 좋습니다.
                     날짜를 보기 좋게 바꾸는 작업은 추후 별도로 진행 예정.
                     지금은 날짜 부분만 잘라서 표시합니다. */}

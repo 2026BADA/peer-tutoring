@@ -1,15 +1,3 @@
-// ============================================================
-// 질문 목록 페이지 (/questions)
-// ------------------------------------------------------------
-// 위에서 만든 컴포넌트들을 실제로 조립한 예시입니다.
-// 보내주신 기본 틀(<div><main></main></div>)을 채운 형태입니다.
-//
-// 'use client' 가 맨 위에 있는 이유:
-//   useState나 onClick 같은 "사용자 상호작용" 기능을 쓰려면
-//   이 페이지가 브라우저에서 실행되는 컴포넌트여야 합니다.
-//   이 지시어가 없으면 useState에서 에러가 납니다.
-// ============================================================
-
 'use client';
 
 import { useState } from 'react';
@@ -58,21 +46,19 @@ export default function Questions() {
                     />
                 </div>
 
-                {/* 질문 카드 그리드.
-                    repeat(auto-fit, ...)은 화면 너비에 맞춰 카드 개수를 자동 조절합니다. */}
-                <div
-                    className="grid gap-4"
-                    style={{
-                        gridTemplateColumns:
-                            'repeat(auto-fit, minmax(260px, 1fr))',
-                    }}
-                >
-                    {/* 걸러낸 질문들을 하나씩 카드로 만듭니다.
-                        각 카드를 <Link>로 감싸서, 카드를 누르면
+                {/* 질문 리스트.
+                    divide-y로 각 행 사이에 구분선을 그어 목록 형태로 보여줍니다. */}
+                <div className="divide-y divide-base-300 border-t border-b border-base-300">
+                    {/* 걸러낸 질문들을 하나씩 리스트 행으로 만듭니다.
+                        각 행을 <Link>로 감싸서, 누르면
                         해당 질문의 상세 페이지(/questions/질문id)로 이동합니다.
                         (QuestionCard 자체는 이동 로직을 모릅니다 — 여기서 처리) */}
                     {filteredQuestions.map((question) => (
-                        <Link key={question.id} href={`/questions/${question.id}`}>
+                        <Link
+                            key={question.id}
+                            href={`/questions/${question.id}`}
+                            className="block hover:bg-base-200/50"
+                        >
                             <QuestionCard question={question} />
                         </Link>
                     ))}
