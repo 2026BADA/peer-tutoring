@@ -27,7 +27,6 @@ export default async function NavBar() {
                     <Link href="/login">로그인</Link>
                 )}
             </div>
-            ㅎ{" "}
         </nav>
     );
 }
