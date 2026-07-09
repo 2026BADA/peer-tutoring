@@ -1,3 +1,4 @@
+import Link from "next/link";
 //네비게이션 바(탭)
 const NAV_CARDS = [
     {href: "/questions", icon: "🙋‍♂️", title: "Questions", description: "Ask and answer questions" },
@@ -39,11 +40,11 @@ export default function Home() {
                 {/* T-11 네비게이션 카드 4개 */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {NAV_CARDS.map((card) => (
-                        <Link>
+                        <Link
                             key={card.href}
                             href={card.href}
                             className="flex items-center gap-3 rounded-lg border border-base-300 px-4 py-4 transition-colors hover:bg-base-200/50"
-                        
+                        >
                             <span className="shrink-0 text-2xl">{card.icon}</span>
                             <div className="min-w-0 flex-1">
                                 <h3 className="truncate text-sm font-medium text-base-content">
@@ -54,7 +55,7 @@ export default function Home() {
                                 </p>
                             </div>
                         </Link>
-                    ))}
+                        ))}
                 </div>
             </main>
         </div>
