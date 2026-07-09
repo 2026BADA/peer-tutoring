@@ -1,10 +1,10 @@
 import Link from "next/link";
 //네비게이션 바(탭)
 const NAV_CARDS = [
-    {href: "/questions", icon: "🙋‍♂️", title: "Questions", description: "Ask and answer questions" },
-    {href: "/questions/new", icon: "✏️", title: "Ask a Question", description: "Post a new question" },
-    {href: "/ranking", icon: "🏅", title: "Ranking", description: "View rankings" },
-    {href: "/profile/me", icon: "🧍", title: "Profile", description: "View and edit your profile" }
+    {href: "/questions", icon: "🙋‍♂️", title: "질문 답변하기", description: "선후배·동기의 고민을 해결해 주세요" },
+    {href: "/questions/new", icon: "✏️", title: "질문하기", description: "혼자 고민하지 말고, 선후배·동기에게 질문하기" },
+    {href: "/ranking", icon: "🏅", title: "순위", description: "Peer Tutoring에서의 당신의 순위는?" },
+    {href: "/profile/me", icon: "🧍", title: "프로필", description: "나의 프로필 편집" }
 ];
 //더미 데이터 (사용자)
 const DUMMY_USER = { points: 150, tier: "Bronze" };
