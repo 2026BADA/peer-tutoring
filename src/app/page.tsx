@@ -5,6 +5,9 @@ const NAV_CARDS = [
     {href: "/ranking", icon: "🏅", title: "Ranking", description: "View rankings" },
     {href: "/profile/me", icon: "🧍", title: "Profile", description: "View and edit your profile" }
 ];
+//더미 데이터 (사용자)
+const DUMMY_USER = { points: 150, tier: "Bronze" };
+
 export default function Home() {
     return (
         <div>
