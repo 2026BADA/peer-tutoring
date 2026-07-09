@@ -1,5 +1,9 @@
 import Link from "next/link";
-//네비게이션 바(탭)
+/*
+!!IMPORTANT: layout.tsx에 전역 헤더/네비게이션 여부 확인 필요.
+ 재 이 페이지의 최상위 <div>는 형제 요소가 없어 불필요할 수 있음 (layout.tsx 구조 확인 후 제거 검토)
+*/
+//네비게이션 카드 데이터
 const NAV_CARDS = [
     {href: "/questions", icon: "🙋‍♂️", title: "질문 답변하기", description: "선후배·동기의 고민을 해결해 주세요" },
     {href: "/questions/new", icon: "✏️", title: "질문하기", description: "혼자 고민하지 말고, 선후배·동기에게 질문하기" },
@@ -47,9 +51,9 @@ export default function Home() {
                         >
                             <span className="shrink-0 text-2xl">{card.icon}</span>
                             <div className="min-w-0 flex-1">
-                                <h3 className="truncate text-sm font-medium text-base-content">
+                                <h2 className="truncate text-sm font-medium text-base-content">
                                     {card.title}
-                                </h3>
+                                </h2>
                                 <p className="mt-1 truncate text-xs text-base-content/55">
                                     {card.description}
                                 </p>
