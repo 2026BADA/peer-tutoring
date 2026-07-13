@@ -58,10 +58,8 @@ export default function Home() {
                     >
                         📝 질문하기
                     </Link>
-                    <Link href="/profile/me" aria-label="내 프로필" className="relative">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-base-200 text-base ring-1 ring-base-300 transition-all hover:ring-2 hover:ring-base-content/30">
-                            🧍
-                        </span>
+                    <Link href="/profile/me" className="btn btn-outline btn-sm">
+                        🧍 프로필
                     </Link>
                     </div>
                 </div>
