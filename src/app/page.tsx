@@ -52,16 +52,20 @@ export default function Home() {
                         Peer Tutoring
                     </Link>
                     <div className="flex items-center gap-3">
-                    <Link href="/questions/new" className="btn btn-primary btn-sm">
-                        질문하기
+                    <Link
+                        href="/questions/new"
+                        className="btn btn-primary btn-sm shadow-md transition-transform hover:scale-105"
+                    >
+                        📝 질문하기
                     </Link>
-                        <Link
-                            href="/profile/me"
-                            aria-label="내 프로필"
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-sm transition-opacity hover:opacity-80"
-                        >
+                    <Link href="/profile/me" aria-label="내 프로필" className="relative">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-base-200 text-base ring-1 ring-base-300 transition-all hover:ring-2 hover:ring-base-content/30">
                             🧍
-                        </Link>
+                        </span>
+                        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-base-100 text-[10px] ring-1 ring-base-300">
+                            💎
+                        </span>
+                    </Link>
                     </div>
                 </div>
             </header>
