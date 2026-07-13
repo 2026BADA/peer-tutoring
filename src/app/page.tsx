@@ -62,9 +62,6 @@ export default function Home() {
                         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-base-200 text-base ring-1 ring-base-300 transition-all hover:ring-2 hover:ring-base-content/30">
                             🧍
                         </span>
-                        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-base-100 text-[10px] ring-1 ring-base-300">
-                            💎
-                        </span>
                     </Link>
                     </div>
                 </div>
