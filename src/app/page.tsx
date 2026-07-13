@@ -52,12 +52,9 @@ export default function Home() {
                         Peer Tutoring
                     </Link>
                     <div className="flex items-center gap-3">
-                        <Link
-                            href="/questions/new"
-                            className="rounded-lg border border-base-300 px-3 py-1.5 text-xs font-medium text-base-content transition-colors hover:bg-base-200/50"
-                        >
-                            질문하기
-                        </Link>
+                    <Link href="/questions/new" className="btn btn-primary btn-sm">
+                        질문하기
+                    </Link>
                         <Link
                             href="/profile/me"
                             aria-label="내 프로필"
@@ -107,7 +104,7 @@ export default function Home() {
                     {/* 티어 진행 바 */}
                     <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-base-300">
                         <div
-                            className="h-full rounded-full bg-base-content/70"
+                            className="h-full rounded-full bg-base-content/70 transition-[width] duration-700 ease-out"
                             style={{ width: `${tierProgress}%` }}
                         />
                     </div>
@@ -119,9 +116,11 @@ export default function Home() {
                         <Link
                             key={card.href}
                             href={card.href}
-                            className="flex items-center gap-3 rounded-lg border border-base-300 px-4 py-4 transition-colors hover:bg-base-200/50"
+                            className="group flex items-center gap-3 rounded-xl border border-base-300 px-4 py-4 transition-all hover:-translate-y-0.5 hover:bg-base-200/50 hover:shadow-sm"
                         >
-                            <span className="shrink-0 text-2xl">{card.icon}</span>
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-base-200 text-xl transition-transform group-hover:scale-110">
+                                {card.icon}
+                            </span>
                             <div className="min-w-0 flex-1">
                                 <h2 className="truncate text-sm font-medium text-base-content">
                                     {card.title}
@@ -137,7 +136,10 @@ export default function Home() {
                 {/* 최근 질문 미리보기 — 더미, T-13에서 실데이터 교체 */}
                 <div className="mt-10">
                     <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-medium text-base-content">방금 올라온 질문</h2>
+                    <h2 className="flex items-center gap-2 text-sm font-medium text-base-content">
+                        <span className="h-3.5 w-0.5 rounded-full bg-base-content/30" />
+                        방금 올라온 질문
+                    </h2>
                         <Link
                             href="/questions"
                             className="text-xs text-base-content/45 transition-colors hover:text-base-content/80"
@@ -177,9 +179,10 @@ export default function Home() {
 
                 {/* 이용 방법 안내 (정적 섹션) */}
                 <div className="mt-10">
-                    <h2 className="mb-3 text-sm font-medium text-base-content">
-                        Peer Tutoring 이용 방법
-                    </h2>
+                <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-base-content">
+                    <span className="h-3.5 w-0.5 rounded-full bg-base-content/30" />
+                    Peer Tutoring 이용 방법
+                </h2>
                     <div className="divide-y divide-base-300 border-t border-b border-base-300">
                         {HOW_IT_WORKS.map((item) => (
                             <div key={item.step} className="flex items-center gap-3 px-1 py-3">
