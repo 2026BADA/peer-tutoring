@@ -49,22 +49,22 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                 min-w-0이 있어야 자식의 truncate가 flex 안에서 제대로 동작합니다. */}
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                    {/* 과목 뱃지 — 배경/글자색은 과목별 색상 사용 */}
+                    {/* 과목 뱃지 — daisyUI badge 클래스 위에 과목별 색상을 인라인으로 덮어씁니다 */}
                     <span
-                        className="shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium"
+                        className="badge badge-sm shrink-0 whitespace-nowrap border-none font-medium"
                         style={{ backgroundColor: colors.badge, color: colors.text }}
                     >
                         {question.category}
                     </span>
 
                     {/* 채택 여부 표시
-                        status가 'closed'이면 채택완료, 'open'이면 진행중 */}
+                        status가 'closed'이면 채택완료(success), 'open'이면 진행중(ghost) */}
                     {question.status === 'closed' ? (
-                        <span className="flex shrink-0 items-center gap-0.5 whitespace-nowrap text-[10px] text-amber-700">
+                        <span className="badge badge-success badge-outline badge-sm shrink-0 gap-0.5 whitespace-nowrap">
                             ✓ 채택완료
                         </span>
                     ) : (
-                        <span className="shrink-0 whitespace-nowrap text-[10px] text-base-content/40">
+                        <span className="badge badge-ghost badge-sm shrink-0 whitespace-nowrap text-base-content/40">
                             진행중
                         </span>
                     )}
