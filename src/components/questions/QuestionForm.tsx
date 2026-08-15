@@ -115,6 +115,13 @@ export default function QuestionForm({
                 )}
             </div>
 
+            {/* ---------- 사진 첨부 ---------- */}
+            {/* 질문 상세 페이지의 사진 자리와 동일한 placeholder.
+                실제 업로드 기능이 추가되면 이 자리를 교체하면 됩니다. */}
+            <div className="flex w-[720px] h-[120px] mx-auto items-center justify-center rounded-xl border border-dashed border-base-300 text-sm text-base-content/40">
+                문제지 사진 첨부 영역
+            </div>
+
             {/* ---------- 등록 버튼 ---------- */}
             <div className="flex justify-end">
                 <button className="btn btn-primary" onClick={onSubmit}>
