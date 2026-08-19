@@ -27,12 +27,12 @@ interface AnswerCardProps {
 export default function AnswerCard({ answer, onAdopt }: AnswerCardProps) {
     return (
         <div
-            // 채택된 답변은 옅은 노란 배경 + 노란 테두리로 강조,
+            // 채택된 답변은 옅은 success 배경 + success 테두리로 강조,
             // 일반 답변은 흰 배경 + 회색 테두리.
             className={
                 'rounded-xl border p-4 ' +
                 (answer.isAdopted
-                    ? 'border-amber-300 bg-amber-50'
+                    ? 'border-success/30 bg-success/5'
                     : 'border-base-300 bg-base-100')
             }
         >
@@ -50,7 +50,7 @@ export default function AnswerCard({ answer, onAdopt }: AnswerCardProps) {
 
                 {/* 채택된 답변이면 "채택됨" 배지 표시 */}
                 {answer.isAdopted && (
-                    <span className="flex items-center gap-0.5 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                    <span className="badge badge-success badge-sm gap-0.5">
                         ✓ 채택됨
                     </span>
                 )}
@@ -73,7 +73,7 @@ export default function AnswerCard({ answer, onAdopt }: AnswerCardProps) {
                 {onAdopt && !answer.isAdopted && (
                     <button
                         onClick={onAdopt}
-                        className="btn btn-outline btn-xs"
+                        className="btn btn-outline btn-success btn-xs"
                     >
                         채택하기
                     </button>
