@@ -13,11 +13,15 @@
 // (실제 "어떤 칸이 비었는지 검사"하는 로직과 "저장"은 부모/총괄이 담당)
 // ============================================================
 
-import type { Category } from '@/types';
+import type { CategoryName } from '@/types';
+import { SUBJECT_CATEGORIES } from '@/types';
 
-// 과목 선택 드롭다운에 넣을 목록.
-// '전체'는 필터용이지 작성용이 아니므로 여기에는 넣지 않습니다.
-const CATEGORY_OPTIONS: Category[] = ['수학', '과학', '영어', '사회', '기타'];
+// 과목 선택 드롭다운에 넣을 대분류 → 세부과목 목록.
+// Object.entries로 순회하면서 <optgroup>으로 묶어서 보여줍니다.
+const SUBJECT_ENTRIES = Object.entries(SUBJECT_CATEGORIES) as [
+    string,
+    readonly string[],
+][];
 
 // 입력창 아래에 표시할 에러 메시지들의 모양.
 // 각 필드별로 에러 문구가 있을 수도(string) 없을 수도(undefined) 있습니다.
@@ -34,10 +38,10 @@ interface QuestionFormErrors {
 //   errors                     → (선택) 필드별 에러 메시지
 interface QuestionFormProps {
     title: string;
-    category: Category | ''; // ''는 "아직 과목 선택 안 함" 상태를 의미
+    category: CategoryName | ''; // ''는 "아직 과목 선택 안 함" 상태를 의미
     body: string;
     onChangeTitle: (value: string) => void;
-    onChangeCategory: (value: Category | '') => void;
+    onChangeCategory: (value: CategoryName | '') => void;
     onChangeBody: (value: string) => void;
     onSubmit: () => void;
     errors?: QuestionFormErrors;
@@ -81,16 +85,22 @@ export default function QuestionForm({
                 <select
                     className="select select-bordered w-full"
                     value={category}
-                    // select의 값은 항상 문자열이라 Category 타입으로 변환해서 넘깁니다.
-                    onChange={(e) => onChangeCategory(e.target.value as Category | '')}
+                    // select의 값은 항상 문자열이라 CategoryName 타입으로 변환해서 넘깁니다.
+                    onChange={(e) =>
+                        onChangeCategory(e.target.value as CategoryName | '')
+                    }
                 >
                     {/* 기본 안내 옵션. value=''이라 아직 선택 안 한 상태를 나타냄 */}
                     <option value="">과목을 선택하세요</option>
-                    {/* 과목 목록을 돌면서 옵션을 하나씩 생성 */}
-                    {CATEGORY_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
+                    {/* 대분류(수학/과학/...)별로 optgroup을 만들고, 그 안에 세부과목을 나열합니다. */}
+                    {SUBJECT_ENTRIES.map(([subject, categories]) => (
+                        <optgroup key={subject} label={subject}>
+                            {categories.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </optgroup>
                     ))}
                 </select>
                 {errors?.category && (
