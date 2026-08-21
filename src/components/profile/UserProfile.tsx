@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { getTierLabel } from '@/lib/tier';
 
 interface UserProfileProps {
+    id: string;
     nickname: string;
     points: number;
     questionCount: number;
@@ -29,6 +30,7 @@ interface UserProfileProps {
 }
 
 export default function UserProfile({
+    id,
     nickname,
     points,
     questionCount,
@@ -122,15 +124,18 @@ export default function UserProfile({
                         바로가기 메뉴
                     </h2>
                     <div className="flex flex-col gap-2">
-                        <button className="btn btn-block justify-start border-none bg-base-200 text-base-content hover:bg-base-300">
+                        <Link
+                            href={`/questions?author=${id}`}
+                            className="btn btn-block justify-start border-none bg-base-200 text-base-content hover:bg-base-300"
+                        >
                             내 질문 모아보기
-                        </button>
-                        <button className="btn btn-block justify-start border-none bg-base-200 text-base-content hover:bg-base-300">
+                        </Link>
+                        <Link
+                            href={`/questions?answered=${id}`}
+                            className="btn btn-block justify-start border-none bg-base-200 text-base-content hover:bg-base-300"
+                        >
                             내 답변 모아보기
-                        </button>
-                        <button className="btn btn-outline btn-error btn-block justify-start">
-                            즐겨찾기한 질문 목록
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

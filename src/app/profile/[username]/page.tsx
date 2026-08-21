@@ -22,6 +22,7 @@ export default async function ProfilePage({
 
     return (
         <UserProfile
+            id={profile.id}
             nickname={profile.nickname}
             points={profile.points}
             questionCount={profile.questionCount}

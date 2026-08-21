@@ -37,11 +37,20 @@ function toQuestion(row: any): Question {
     };
 }
 
-// 질문 목록 전체를 최신순으로 가져옵니다. (/questions 페이지에서 사용)
-export async function getQuestions(): Promise<Question[]> {
+export interface QuestionsFilter {
+    authorId?: string; // 이 유저가 작성한 질문만
+    answeredBy?: string; // 이 유저가 답변을 단 질문만
+}
+
+// 질문 목록을 최신순으로 가져옵니다. (/questions 페이지에서 사용)
+// filter를 안 넘기면 전체 목록, authorId/answeredBy를 넘기면 "내 질문 모아보기" /
+// "내 답변 모아보기"처럼 특정 유저 기준으로 좁혀서 가져옵니다.
+export async function getQuestions(
+    filter: QuestionsFilter = {},
+): Promise<Question[]> {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    let query = supabase
         .from('questions')
         .select(
             `
@@ -58,6 +67,29 @@ export async function getQuestions(): Promise<Question[]> {
             `,
         )
         .order('created_at', { ascending: false });
+
+    if (filter.authorId) {
+        query = query.eq('author_id', filter.authorId);
+    }
+
+    if (filter.answeredBy) {
+        // "답변을 단 질문"은 questions 테이블만으로는 못 찾아서,
+        // answers에서 이 유저가 쓴 답변들의 question_id를 먼저 모은 다음
+        // 그 id들만 걸러냅니다.
+        const { data: answered } = await supabase
+            .from('answers')
+            .select('question_id')
+            .eq('author_id', filter.answeredBy);
+
+        const questionIds = [
+            ...new Set((answered ?? []).map((row: any) => row.question_id)),
+        ];
+
+        if (questionIds.length === 0) return [];
+        query = query.in('id', questionIds);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
