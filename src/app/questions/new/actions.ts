@@ -8,6 +8,7 @@ interface CreateQuestionInput {
     title: string;
     category: CategoryName;
     body: string;
+    images: string[];
 }
 
 // 질문 작성 폼 제출 시 실행되는 Server Action.
@@ -19,6 +20,7 @@ export async function createQuestion({
     title,
     category,
     body,
+    images,
 }: CreateQuestionInput) {
     const supabase = await createClient();
 
@@ -47,6 +49,7 @@ export async function createQuestion({
             category_id: categoryRow.id,
             title,
             body,
+            images,
         })
         .select('id')
         .single();

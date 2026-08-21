@@ -69,6 +69,7 @@ export interface Question {
     category: CategoryName; // 세부 과목 (실제 표시 이름)
     title: string; // 질문 제목
     body: string; // 질문 본문 (카드에서는 일부만 미리보기로 노출)
+    images: string[]; // 첨부 이미지 URL 목록 (Supabase Storage 공개 URL)
     status: QuestionStatus; // 진행중(open) / 종료(closed)
     answerCount: number; // 달린 답변 수
     createdAt: string; // 작성 시각 (ISO 8601 문자열, 예: '2026-06-10T09:00:00Z')

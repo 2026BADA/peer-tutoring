@@ -89,9 +89,18 @@ export default async function QuestionDetail({
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {/* 왼쪽: 질문 본문 — 홈/작성 페이지의 rounded-xl border-base-300 카드로 감싸 통일 */}
                 <div className="rounded-xl border border-base-300 p-5">
-                    <div className="mb-4 flex aspect-video items-center justify-center rounded-xl border border-dashed border-base-300 text-sm text-base-content/40">
-                        사진 첨부 영역
-                    </div>
+                    {question.images.length > 0 ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={question.images[0]}
+                            alt="첨부한 문제지 사진"
+                            className="mb-4 w-full rounded-xl border border-base-300 object-cover"
+                        />
+                    ) : (
+                        <div className="mb-4 flex aspect-video items-center justify-center rounded-xl border border-dashed border-base-300 text-sm text-base-content/40">
+                            첨부된 사진 없음
+                        </div>
+                    )}
 
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-base-content">
                         {question.body}

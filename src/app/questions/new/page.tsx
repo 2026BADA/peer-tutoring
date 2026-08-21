@@ -18,6 +18,7 @@ export default function New() {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState<CategoryName | ''>('');
     const [body, setBody] = useState('');
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [errors, setErrors] = useState<FormErrors>({});
 
     // 등록 버튼을 눌렀을 때의 처리.
@@ -33,7 +34,12 @@ export default function New() {
         setErrors(nextErrors);
         if (Object.keys(nextErrors).length > 0) return;
 
-        await createQuestion({ title, category: category as CategoryName, body });
+        await createQuestion({
+            title,
+            category: category as CategoryName,
+            body,
+            images: imageUrl ? [imageUrl] : [],
+        });
     }
 
     return (
@@ -57,9 +63,11 @@ export default function New() {
                     title={title}
                     category={category}
                     body={body}
+                    imageUrl={imageUrl}
                     onChangeTitle={setTitle}
                     onChangeCategory={setCategory}
                     onChangeBody={setBody}
+                    onImageChange={setImageUrl}
                     onSubmit={handleSubmit}
                     errors={errors}
                 />
