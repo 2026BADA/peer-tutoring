@@ -10,25 +10,31 @@
 //   - 섹션 간 간격: mb-6, 섹션 내부 간격: mt-1~3 / gap-1.5~3
 //
 // 뱃지/버튼처럼 daisyUI로 표현되는 요소는 실제 daisyUI 컴포넌트 클래스
-// (badge, btn)와 시맨틱 색상(success=채택·인증, warning=획득 뱃지,
+// (badge, btn)와 시맨틱 색상(success=채택, warning=획득 뱃지,
 // error=즐겨찾기)을 그대로 사용합니다.
+//
+// ⚠️ 실제 데이터는 profile/[username]/page.tsx가 Supabase에서 조회해서
+// props로 내려줍니다. 이 컴포넌트는 그 값을 그대로 보여주기만 합니다.
+// (뱃지·자기소개·즐겨찾기는 아직 DB에 해당 테이블/컬럼이 없어서 빠져있습니다)
 // ============================================================
 import Link from 'next/link';
+import { getTierLabel } from '@/lib/tier';
 
-export default function UserProfile() {
-    const DUMMY_PROFILE = {
-        name: '이준영',
-        bio: '수학(대수, 미적분) 질문 환영합니다! 공과대학 지망해요.',
-        tier: '🥈 실버',
-        badges: ['수학 고수', '지식 나눔이', '채택왕'],
-        stats: {
-            questions: 15,
-            answers: 42,
-            adoptionRate: 85,
-            totalPoints: 450,
-        },
-    };
+interface UserProfileProps {
+    nickname: string;
+    points: number;
+    questionCount: number;
+    answerCount: number;
+    adoptionRate: number;
+}
 
+export default function UserProfile({
+    nickname,
+    points,
+    questionCount,
+    answerCount,
+    adoptionRate,
+}: UserProfileProps) {
     return (
         <main className="mx-auto w-full max-w-[1200px] px-6 py-16">
             {/* 다른 페이지와 동일한 뒤로가기 링크 패턴 */}
@@ -43,28 +49,17 @@ export default function UserProfile() {
                 <div className="mb-6 mt-2 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/10 text-xs">
-                            {DUMMY_PROFILE.name.charAt(0)}
+                            {nickname.charAt(0)}
                         </div>
                         <div>
-                            <div className="flex items-center gap-1.5">
-                                <h1 className="text-xl font-medium text-base-content">
-                                    {DUMMY_PROFILE.name}님의 프로필
-                                </h1>
-                                <span className="badge badge-success badge-outline badge-sm gap-0.5">
-                                    ✓ 인증됨
-                                </span>
-                            </div>
+                            <h1 className="text-xl font-medium text-base-content">
+                                {nickname}님의 프로필
+                            </h1>
                             <p className="mt-1 text-sm text-base-content/55">
-                                내 활동 내역을 확인하고 티어와 뱃지를 관리해보세요
+                                내 활동 내역을 확인하고 티어를 관리해보세요
                             </p>
                         </div>
                     </div>
-                </div>
-
-                <div className="mb-6 rounded-xl border border-base-300 p-4">
-                    <p className="text-sm leading-relaxed text-base-content">
-                        {DUMMY_PROFILE.bio}
-                    </p>
                 </div>
 
                 <div className="mb-6 rounded-xl border border-base-300 bg-base-200/30 p-5">
@@ -73,23 +68,17 @@ export default function UserProfile() {
                             현재 티어
                         </span>
                         <span className="text-base font-bold text-primary">
-                            {DUMMY_PROFILE.tier}
+                            {getTierLabel(points)}
                         </span>
                     </div>
                     <div>
                         <span className="mb-2 block text-sm font-medium text-base-content/70">
                             보유 뱃지
                         </span>
-                        <div className="flex flex-wrap gap-1.5">
-                            {DUMMY_PROFILE.badges.map((badge) => (
-                                <span
-                                    key={badge}
-                                    className="badge badge-warning badge-outline badge-sm"
-                                >
-                                    {badge}
-                                </span>
-                            ))}
-                        </div>
+                        {/* 뱃지 시스템은 아직 미구현 (badges/user_badges 테이블 없음) */}
+                        <p className="text-xs text-base-content/40">
+                            아직 획득한 뱃지가 없어요
+                        </p>
                     </div>
                 </div>
 
@@ -102,19 +91,19 @@ export default function UserProfile() {
                         <div className="rounded-xl border border-base-300 p-4 text-center">
                             <p className="mb-1 text-xs text-base-content/55">질문 수</p>
                             <strong className="text-lg font-semibold text-base-content">
-                                {DUMMY_PROFILE.stats.questions}개
+                                {questionCount}개
                             </strong>
                         </div>
                         <div className="rounded-xl border border-base-300 p-4 text-center">
                             <p className="mb-1 text-xs text-base-content/55">답변 수</p>
                             <strong className="text-lg font-semibold text-base-content">
-                                {DUMMY_PROFILE.stats.answers}개
+                                {answerCount}개
                             </strong>
                         </div>
                         <div className="rounded-xl border border-base-300 p-4 text-center">
                             <p className="mb-1 text-xs text-base-content/55">채택률</p>
                             <strong className="text-lg font-semibold text-success">
-                                {DUMMY_PROFILE.stats.adoptionRate}%
+                                {adoptionRate}%
                             </strong>
                         </div>
                         <div className="rounded-xl border border-success/20 bg-success/5 p-4 text-center">
@@ -122,7 +111,7 @@ export default function UserProfile() {
                                 총 포인트
                             </p>
                             <strong className="text-lg font-bold text-success">
-                                {DUMMY_PROFILE.stats.totalPoints} P
+                                {points} P
                             </strong>
                         </div>
                     </div>
