@@ -1,18 +1,23 @@
-'use client';
-
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { DUMMY_QUESTIONS, DUMMY_ANSWERS } from '@/lib/dummy';
+import { createClient } from '@/lib/supabase/server';
+import { getQuestionById, getAnswersByQuestionId } from '@/lib/queries/questions';
 import { getCategoryColor } from '@/lib/categoryColors';
-import AnswerCard from '@/components/questions/AnswerCard';
-import AnswerForm from '@/components/questions/AnswerForm';
+import QuestionInteractionPanel from '@/components/questions/QuestionInteractionPanel';
 
-export default function QuestionDetail() {
-    const { id } = useParams<{ id: string }>();
-    const question = DUMMY_QUESTIONS.find((q) => q.id === id);
-    const answers = DUMMY_ANSWERS.filter((answer) => answer.questionId === id);
-    const [answerValue, setAnswerValue] = useState('');
+// 서버 컴포넌트: URL의 [id]는 params라는 Promise로 전달되므로 await해서 꺼냅니다.
+export default async function QuestionDetail({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const question = await getQuestionById(id);
 
     if (!question) {
         return (
@@ -24,11 +29,12 @@ export default function QuestionDetail() {
         );
     }
 
-    const colors = getCategoryColor(question.category);
+    const answers = await getAnswersByQuestionId(id);
+    const colors = getCategoryColor(question.subject);
 
-    function handleSubmitAnswer() {
-        setAnswerValue('');
-    }
+    const isOpen = question.status === 'open';
+    const canAnswer = Boolean(user) && isOpen;
+    const canAdopt = Boolean(user) && user!.id === question.authorId && isOpen;
 
     return (
         <main className="mx-auto w-full max-w-[1200px] px-6 py-16">
@@ -92,24 +98,12 @@ export default function QuestionDetail() {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    <AnswerForm
-                        value={answerValue}
-                        onChange={setAnswerValue}
-                        onSubmit={handleSubmitAnswer}
-                    />
-
-                    {answers.length > 0 && (
-                        <div className="flex flex-col gap-3">
-                            <p className="text-sm font-medium text-base-content">
-                                답변 {answers.length}개
-                            </p>
-                            {answers.map((answer) => (
-                                <AnswerCard key={answer.id} answer={answer} />
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <QuestionInteractionPanel
+                    questionId={question.id}
+                    answers={answers}
+                    canAnswer={canAnswer}
+                    canAdopt={canAdopt}
+                />
             </div>
         </main>
     );
