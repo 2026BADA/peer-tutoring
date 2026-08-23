@@ -21,6 +21,19 @@ export async function submitAnswer({
         throw new Error('로그인이 필요합니다');
     }
 
+    // 화면(canAnswer)에서는 이미 종료된 질문이면 폼 자체를 숨기지만,
+    // 이 함수는 그 화면을 거치지 않고 직접 호출될 수도 있어서 서버에서도 다시 확인합니다.
+    const { data: question, error: questionError } = await supabase
+        .from('questions')
+        .select('status')
+        .eq('id', questionId)
+        .single();
+
+    if (questionError) throw questionError;
+    if (question.status !== 'open') {
+        throw new Error('이미 종료된 질문에는 답변할 수 없습니다');
+    }
+
     const { error } = await supabase.from('answers').insert({
         question_id: questionId,
         author_id: user.id,
