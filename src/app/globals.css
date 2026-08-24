@@ -1,5 +1,8 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+    /* NOTE: neovim 환경에서 저장 시 log가 뜨는 버그가 있어 수정함. */
+    logs: false;
+}
 
 :root {
     --background: #ffffff;

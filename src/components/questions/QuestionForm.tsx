@@ -13,11 +13,19 @@
 // (실제 "어떤 칸이 비었는지 검사"하는 로직과 "저장"은 부모/총괄이 담당)
 // ============================================================
 
-import type { Category } from '@/types';
+'use client';
 
-// 과목 선택 드롭다운에 넣을 목록.
-// '전체'는 필터용이지 작성용이 아니므로 여기에는 넣지 않습니다.
-const CATEGORY_OPTIONS: Category[] = ['수학', '과학', '영어', '사회', '기타'];
+import { useState } from 'react';
+import type { CategoryName } from '@/types';
+import { SUBJECT_CATEGORIES } from '@/types';
+import { createClient } from '@/lib/supabase/client';
+
+// 과목 선택 드롭다운에 넣을 대분류 → 세부과목 목록.
+// Object.entries로 순회하면서 <optgroup>으로 묶어서 보여줍니다.
+const SUBJECT_ENTRIES = Object.entries(SUBJECT_CATEGORIES) as [
+    string,
+    readonly string[],
+][];
 
 // 입력창 아래에 표시할 에러 메시지들의 모양.
 // 각 필드별로 에러 문구가 있을 수도(string) 없을 수도(undefined) 있습니다.
@@ -34,11 +42,13 @@ interface QuestionFormErrors {
 //   errors                     → (선택) 필드별 에러 메시지
 interface QuestionFormProps {
     title: string;
-    category: Category | ''; // ''는 "아직 과목 선택 안 함" 상태를 의미
+    category: CategoryName | ''; // ''는 "아직 과목 선택 안 함" 상태를 의미
     body: string;
+    imageUrl: string | null; // 업로드된 이미지의 공개 URL (없으면 null)
     onChangeTitle: (value: string) => void;
-    onChangeCategory: (value: Category | '') => void;
+    onChangeCategory: (value: CategoryName | '') => void;
     onChangeBody: (value: string) => void;
+    onImageChange: (url: string | null) => void;
     onSubmit: () => void;
     errors?: QuestionFormErrors;
 }
@@ -47,12 +57,61 @@ export default function QuestionForm({
     title,
     category,
     body,
+    imageUrl,
     onChangeTitle,
     onChangeCategory,
     onChangeBody,
+    onImageChange,
     onSubmit,
     errors,
 }: QuestionFormProps) {
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+
+    // 파일을 고르는 즉시 Supabase Storage(attachments 버킷)에 업로드하고,
+    // 끝나면 공개 URL만 부모에게 전달합니다. (부모는 URL 문자열만 알면 됨)
+    async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        setUploadError(null);
+
+        const supabase = createClient();
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+            setUploadError('로그인이 필요합니다');
+            setUploading(false);
+            return;
+        }
+
+        // 버킷의 업로드 정책이 "경로의 첫 폴더 == 본인 id"만 허용하므로,
+        // 반드시 user.id로 시작하는 경로에 올려야 합니다.
+        // 원본 파일명은 한글/공백 등 Storage가 거부하는 문자를 담고 있을 수 있어서
+        // 쓰지 않고, 확장자만 뽑아서 안전한 이름으로 새로 만듭니다.
+        const extension = file.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}.${extension}`;
+        const { error } = await supabase.storage
+            .from('attachments')
+            .upload(filePath, file);
+
+        if (error) {
+            console.error('Storage upload error:', error);
+            setUploadError(`업로드 실패: ${error.message}`);
+            setUploading(false);
+            return;
+        }
+
+        const {
+            data: { publicUrl },
+        } = supabase.storage.from('attachments').getPublicUrl(filePath);
+
+        onImageChange(publicUrl);
+        setUploading(false);
+    }
     return (
         <div className="flex flex-col gap-4">
             {/* ---------- 제목 입력 ---------- */}
@@ -81,16 +140,22 @@ export default function QuestionForm({
                 <select
                     className="select select-bordered w-full"
                     value={category}
-                    // select의 값은 항상 문자열이라 Category 타입으로 변환해서 넘깁니다.
-                    onChange={(e) => onChangeCategory(e.target.value as Category | '')}
+                    // select의 값은 항상 문자열이라 CategoryName 타입으로 변환해서 넘깁니다.
+                    onChange={(e) =>
+                        onChangeCategory(e.target.value as CategoryName | '')
+                    }
                 >
                     {/* 기본 안내 옵션. value=''이라 아직 선택 안 한 상태를 나타냄 */}
                     <option value="">과목을 선택하세요</option>
-                    {/* 과목 목록을 돌면서 옵션을 하나씩 생성 */}
-                    {CATEGORY_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
+                    {/* 대분류(수학/과학/...)별로 optgroup을 만들고, 그 안에 세부과목을 나열합니다. */}
+                    {SUBJECT_ENTRIES.map(([subject, categories]) => (
+                        <optgroup key={subject} label={subject}>
+                            {categories.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </optgroup>
                     ))}
                 </select>
                 {errors?.category && (
@@ -116,10 +181,41 @@ export default function QuestionForm({
             </div>
 
             {/* ---------- 사진 첨부 ---------- */}
-            {/* 질문 상세 페이지의 사진 자리와 동일한 placeholder.
-                실제 업로드 기능이 추가되면 이 자리를 교체하면 됩니다. */}
-            <div className="flex w-[720px] h-[120px] mx-auto items-center justify-center rounded-xl border border-dashed border-base-300 text-sm text-base-content/40">
-                문제지 사진 첨부 영역
+            <div>
+                <label className="mb-1 block text-sm font-medium text-base-content">
+                    사진 첨부 (선택)
+                </label>
+                {imageUrl ? (
+                    <div className="relative w-full max-w-[360px]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={imageUrl}
+                            alt="첨부한 문제지 사진"
+                            className="w-full rounded-xl border border-base-300 object-cover"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => onImageChange(null)}
+                            className="btn btn-circle btn-xs absolute right-2 top-2"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                ) : (
+                    <label className="flex h-[120px] w-full max-w-[360px] cursor-pointer items-center justify-center rounded-xl border border-dashed border-base-300 text-sm text-base-content/40 hover:border-base-content/40">
+                        {uploading ? '업로드 중...' : '문제지 사진 첨부 영역'}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFileChange}
+                            disabled={uploading}
+                        />
+                    </label>
+                )}
+                {uploadError && (
+                    <p className="mt-1 text-xs text-error">{uploadError}</p>
+                )}
             </div>
 
             {/* ---------- 등록 버튼 ---------- */}

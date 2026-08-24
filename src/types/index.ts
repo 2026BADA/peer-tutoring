@@ -10,23 +10,52 @@
 // ============================================================
 
 // ------------------------------------------------------------
-// 카테고리(과목)
+// 과목 (대분류 Subject + 세부과목 CategoryName)
 // ------------------------------------------------------------
-// 가능한 값을 문자열 유니온으로 제한합니다.
-// 예를 들어 category 변수에 '수학'이라고 쓰면 OK,
-// '수악'처럼 오타를 내면 빨간 줄(타입 에러)이 떠서 바로 알 수 있습니다.
-export type Category = '수학' | '과학' | '영어' | '사회' | '기타';
+// 과목은 2단계로 나뉩니다.
+//   Subject      → 큰 분류. 필터 탭, 뱃지 색상 등에 씁니다. (예: "수학")
+//   CategoryName → 실제 세부 과목 이름. 질문 하나하나에 붙습니다. (예: "대수")
+// 예를 들어 "대수" 질문은 subject: "수학", category: "대수" 로 저장됩니다.
+export type Subject = "수학" | "과학" | "영어" | "국어" | "사회" | "역사";
 
-// 필터 탭에서는 '전체'도 선택할 수 있어야 하므로 별도 타입으로 정의합니다.
-// (Category | '전체' 형태로, 과목 전체 + 전체 보기 옵션)
-export type CategoryFilterValue = Category | '전체';
+// 대분류(Subject)마다 그 안에 어떤 세부 과목이 있는지 정의합니다.
+// 질문 작성 폼의 드롭다운을 이 목록으로 그룹핑해서 만듭니다.
+export const SUBJECT_CATEGORIES: Record<Subject, readonly string[]> = {
+    수학: ["공통수학", "대수", "미적분", "기하", "확률과 통계"],
+    과학: ["통합과학", "물리", "화학", "생명과학", "지구과학"],
+    영어: ["영어"],
+    국어: ["국어"],
+    사회: ["사회"],
+    역사: ["역사"],
+};
+
+// 세부 과목 이름을 문자열 유니온으로 제한합니다. (SUBJECT_CATEGORIES의 모든 값)
+export type CategoryName =
+    | "공통수학"
+    | "대수"
+    | "미적분"
+    | "기하"
+    | "확률과 통계"
+    | "통합과학"
+    | "물리"
+    | "화학"
+    | "생명과학"
+    | "지구과학"
+    | "영어"
+    | "국어"
+    | "사회"
+    | "역사";
+
+// 필터 탭에서는 "전체"도 선택할 수 있어야 하므로 별도 타입으로 정의합니다.
+// 필터는 세부 과목이 아니라 대분류(Subject) 기준으로 동작합니다.
+export type CategoryFilterValue = Subject | "전체";
 
 // ------------------------------------------------------------
 // 질문 상태
 // ------------------------------------------------------------
 // open   = 진행중 (아직 채택된 답변 없음)
 // closed = 종료됨 (답변이 채택되어 질문이 닫힘)
-export type QuestionStatus = 'open' | 'closed';
+export type QuestionStatus = "open" | "closed";
 
 // ------------------------------------------------------------
 // 질문(Question)
@@ -36,9 +65,11 @@ export interface Question {
     id: string; // 질문 고유 ID (UUID 또는 숫자 문자열). URL의 [id] 부분에 들어감
     authorId: string; // 작성자 고유 ID
     authorName: string; // 작성자 닉네임 (카드에 표시)
-    category: Category; // 과목
+    subject: Subject; // 대분류 (뱃지 색상, 필터링용)
+    category: CategoryName; // 세부 과목 (실제 표시 이름)
     title: string; // 질문 제목
     body: string; // 질문 본문 (카드에서는 일부만 미리보기로 노출)
+    images: string[]; // 첨부 이미지 URL 목록 (Supabase Storage 공개 URL)
     status: QuestionStatus; // 진행중(open) / 종료(closed)
     answerCount: number; // 달린 답변 수
     createdAt: string; // 작성 시각 (ISO 8601 문자열, 예: '2026-06-10T09:00:00Z')

@@ -19,7 +19,7 @@ import type { CategoryFilterValue } from '@/types';
 
 // 화면에 표시할 탭 목록.
 // '전체'를 맨 앞에 두고, 나머지는 과목들입니다.
-const FILTER_TABS: CategoryFilterValue[] = ['전체', '수학', '과학', '영어', '사회'];
+const FILTER_TABS: CategoryFilterValue[] = ['전체', '수학', '과학', '영어', '국어', '사회', '역사'];
 
 // 이 컴포넌트가 받는 props:
 //   selected  → 현재 선택된 탭 (부모가 관리)

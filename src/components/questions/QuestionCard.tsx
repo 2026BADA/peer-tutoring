@@ -34,7 +34,7 @@ function getPreview(body: string, maxLength: number = 30): string {
 
 export default function QuestionCard({ question }: QuestionCardProps) {
     // 이 질문의 과목에 해당하는 색상 묶음을 가져옵니다.
-    const colors = getCategoryColor(question.category);
+    const colors = getCategoryColor(question.subject);
 
     return (
         <div className="flex items-center gap-3 px-1 py-3">
